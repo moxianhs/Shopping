@@ -1,6 +1,7 @@
 package com.example.app.shopping.homepage;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,13 +10,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.app.shopping.R;
+import com.example.app.shopping.goods.GoodsListActivity;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     private String[] mItemTitles;
     private Context mContext;
 
-    public RecyclerAdapter(Context context) {
+    RecyclerAdapter(Context context) {
         mContext = context;
         mItemTitles = mContext.getResources().getStringArray(R.array.homepage_item);
     }
@@ -26,6 +28,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         View v = LayoutInflater
                 .from(viewGroup.getContext())
                 .inflate(R.layout.item_recycler_homepage, viewGroup, false);
+        v.setOnClickListener(view -> {
+            Intent intent = new Intent(mContext, GoodsListActivity.class);
+            intent.putExtra("keyword", mItemTitles[i].replace("区", ""));
+            mContext.startActivity(intent);
+        });
         return new ViewHolder(v);
     }
 

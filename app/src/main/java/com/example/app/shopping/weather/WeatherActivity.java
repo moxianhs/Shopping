@@ -129,13 +129,13 @@ public class WeatherActivity extends AppCompatActivity {
             }
 
             Log.e(TAG, "dataInit: 开始网络连接......");
+
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(WeatherService.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
             WeatherService service = retrofit.create(WeatherService.class);
-
             Call<HashMap<String, Object>> call = service.getWeather(code);
 
             try {
@@ -189,4 +189,6 @@ public class WeatherActivity extends AppCompatActivity {
         });
         return super.onCreateOptionsMenu(menu);
     }
+
+
 }

@@ -6,8 +6,8 @@ import io.objectbox.annotation.Id;
 @Entity
 public class Goods {
     @Id
-    private long id;
-
+    private long id = 0;
+    private String name;
     private String pic;
     private double price;
     private String dept;
@@ -19,6 +19,15 @@ public class Goods {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPic() {
@@ -51,5 +60,17 @@ public class Goods {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    @Override
+    public String toString() {
+        return "Goods{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", pic='" + pic + '\'' +
+                ", price=" + price +
+                ", dept='" + dept + '\'' +
+                ", comment='" + comment + '\'' +
+                '}';
     }
 }
