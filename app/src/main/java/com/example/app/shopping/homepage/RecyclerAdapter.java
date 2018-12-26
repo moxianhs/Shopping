@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +13,13 @@ import android.widget.TextView;
 import com.example.app.shopping.R;
 import com.example.app.shopping.goods.GoodsListActivity;
 
+import java.util.Arrays;
+
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     private String[] mItemTitles;
     private Context mContext;
+    private static final String TAG = "RecyclerAdapter";
 
     RecyclerAdapter(Context context) {
         mContext = context;
@@ -28,13 +32,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         View v = LayoutInflater
                 .from(viewGroup.getContext())
                 .inflate(R.layout.item_recycler_homepage, viewGroup, false);
+        v.setTag(i);
         v.setOnClickListener(view -> {
+            int position = (int) view.getTag();
+            String keyword = mItemTitles[position].replace("区", "");
             Intent intent = new Intent(mContext, GoodsListActivity.class);
-            intent.putExtra("keyword", mItemTitles[i].replace("区", ""));
+            intent.putExtra("keyword", keyword);
             mContext.startActivity(intent);
         });
         return new ViewHolder(v);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {

@@ -1,13 +1,19 @@
 package com.example.app.shopping.goods;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +24,7 @@ import com.example.app.shopping.ShoppingApplication;
 import com.example.app.shopping.entity.Goods;
 import com.example.app.shopping.entity.Goods_;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -29,28 +36,29 @@ import io.objectbox.query.Query;
 
 public class GoodsListAdapter extends RecyclerView.Adapter<GoodsListAdapter.ViewHolder> {
 
-    private String mKeyword;
-    private Context mContext;
+    private AppCompatActivity mActivity;
     private List<Goods> mGoodsList;
+    private static final String TAG = "GoodsListAdapter";
 
-    public GoodsListAdapter(Context context, String keyword) {
-        this.mKeyword = keyword;
-        this.mContext = context;
+    public GoodsListAdapter(AppCompatActivity activity, String keyword) {
+        this.mActivity = activity;
 
         Box<Goods> goodsBox = ShoppingApplication.boxStore.boxFor(Goods.class);
         // TODO test keyword
+        Log.e(TAG, "GoodsListAdapter: " + keyword);
         Query<Goods> goodsQuery = goodsBox.query()
-                .equal(Goods_.dept, mKeyword)
+                .equal(Goods_.dept, keyword)
                 .build();
 
         mGoodsList = goodsQuery.find();
+        Log.e(TAG, "GoodsListAdapter: " + mGoodsList);
     }
 
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.item_goods_list, viewGroup, false);
+        View v = LayoutInflater.from(mActivity).inflate(R.layout.item_goods_list, viewGroup, false);
 
         return new ViewHolder(v);
     }
@@ -61,7 +69,17 @@ public class GoodsListAdapter extends RecyclerView.Adapter<GoodsListAdapter.View
         Goods goods = mGoodsList.get(i);
         viewHolder.name.setText(goods.getName());
         viewHolder.price.setText("￥" + goods.getPrice());
-        loadPic(viewHolder, i);
+
+        MutableLiveData<byte[]> byteArray = new MutableLiveData<>();
+
+        byteArray.observe(mActivity, bytes -> {
+            assert bytes != null;
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            viewHolder.pic.setImageBitmap(bitmap);
+        });
+
+        loadPic(byteArray, i);
+
     }
 
     @Override
@@ -70,16 +88,18 @@ public class GoodsListAdapter extends RecyclerView.Adapter<GoodsListAdapter.View
     }
 
 
-    private void loadPic(ViewHolder viewHolder, int i) {
+    private void loadPic(MutableLiveData<byte[]> byteArray, int i) {
         AsyncTask.execute(() -> {
             try {
                 HttpURLConnection connection = (HttpURLConnection) new URL("http:" + mGoodsList.get(i).getPic()).openConnection();
                 connection.connect();
-                InputStream is = connection.getInputStream();
-                byte[] bytes = new byte[65536];
-                int len = is.read(bytes);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, len);
-                viewHolder.pic.setImageBitmap(bitmap);
+
+                InputStream inputStream = connection.getInputStream();
+                byte[] result = new byte[inputStream.available()];
+                int len = inputStream.read(result, 0, result.length);
+                Log.d(TAG, "loadPic: " + (len == result.length));
+
+                byteArray.postValue(result);
 
             } catch (IOException e) {
                 e.printStackTrace();
