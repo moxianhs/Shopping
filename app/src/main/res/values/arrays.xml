@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="homepage_item">
+        <item>食品区</item>
+        <item>婴妇区</item>
+        <item>护肤品区</item>
+        <item>纺织区</item>
+        <item>零食区</item>
+        <item>日用品区</item>
+    </string-array>
+</resources>
