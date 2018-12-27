@@ -39,6 +39,7 @@ public class ShoppingApplication extends Application {
         String line = br.readLine();
         Gson gson = new Gson();
         Box<Goods> goodsBox = boxStore.boxFor(Goods.class);
+        goodsBox.removeAll();
         while (line != null && line.length() > 0) {
             Goods goods = gson.fromJson(line, Goods.class);
             Log.e(TAG, "goodsInit: " + goods);

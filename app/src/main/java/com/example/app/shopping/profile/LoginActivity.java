@@ -9,18 +9,30 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.app.shopping.R;
+import com.example.app.shopping.ShoppingApplication;
+import com.example.app.shopping.entity.User;
+import com.example.app.shopping.entity.User_;
+
+import io.objectbox.Box;
+import io.objectbox.query.Query;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private EditText usernameEdit;
+    private EditText passwordEdit;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initToolbar();
-
+        contentInit();
         TextView registerHint = findViewById(R.id.registerHint);
         registerHint.setOnClickListener(v -> {
             TextView view = (TextView) v;
@@ -39,6 +51,21 @@ public class LoginActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
+    private void contentInit() {
+        usernameEdit = findViewById(R.id.username_field);
+        passwordEdit = findViewById(R.id.password_field);
+    }
+
+
+    public boolean login() {
+        Box<User> userBox = ShoppingApplication.boxStore.boxFor(User.class);
+        Query query = userBox.query().equal(User_.username, usernameEdit.getText().toString()).build();
+        User user = (User) query.findUnique();
+        if (user != null)
+            ShoppingApplication.currentUserId = user.getId();
+        return user != null;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -47,9 +74,13 @@ public class LoginActivity extends AppCompatActivity {
         MenuItem done = menu.findItem(R.id.done);
 
         done.setOnMenuItemClickListener(item -> {
-                    Intent intent = new Intent(this, ProfileActivity.class);
-                    startActivity(intent);
-                    finish();
+                    if (login()) {
+                        Intent intent = new Intent(this, ProfileActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(this, "登录失败", Toast.LENGTH_SHORT).show();
+                    }
                     return false;
                 }
         );

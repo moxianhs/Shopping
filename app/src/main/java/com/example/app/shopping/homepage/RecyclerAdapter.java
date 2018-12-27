@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +11,6 @@ import android.widget.TextView;
 
 import com.example.app.shopping.R;
 import com.example.app.shopping.goods.GoodsListActivity;
-
-import java.util.Arrays;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
@@ -34,8 +31,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 .inflate(R.layout.item_recycler_homepage, viewGroup, false);
         v.setTag(i);
         v.setOnClickListener(view -> {
-            int position = (int) view.getTag();
-            String keyword = mItemTitles[position].replace("区", "");
+            TextView title = view.findViewById(R.id.text);
+            String keyword = title.getText().toString().replace("区", "");
             Intent intent = new Intent(mContext, GoodsListActivity.class);
             intent.putExtra("keyword", keyword);
             mContext.startActivity(intent);
@@ -58,7 +55,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         TextView textView;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.text);
         }

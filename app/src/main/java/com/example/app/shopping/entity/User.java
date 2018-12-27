@@ -6,13 +6,14 @@ import io.objectbox.annotation.Id;
 @Entity
 public class User {
     @Id
-    private long id;
+    private long id = 0;
     private String username;
     private String password;
     private int gender;
     private int age;
     private String mobile;
     private String address;
+
 
     public long getId() {
         return id;

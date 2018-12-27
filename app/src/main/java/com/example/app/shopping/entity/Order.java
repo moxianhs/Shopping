@@ -5,6 +5,9 @@ import io.objectbox.annotation.Id;
 
 @Entity
 public class Order {
+    public static final int ORDERED = 0;
+    public static final int NOT_ORDERED = 1;
+
     @Id
     private long id;
     private long goodsId;

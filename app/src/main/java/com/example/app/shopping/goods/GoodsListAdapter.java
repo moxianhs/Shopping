@@ -1,15 +1,8 @@
 package com.example.app.shopping.goods;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
@@ -19,16 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.app.shopping.R;
 import com.example.app.shopping.ShoppingApplication;
 import com.example.app.shopping.entity.Goods;
 import com.example.app.shopping.entity.Goods_;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 
 import io.objectbox.Box;
@@ -69,16 +58,16 @@ public class GoodsListAdapter extends RecyclerView.Adapter<GoodsListAdapter.View
         Goods goods = mGoodsList.get(i);
         viewHolder.name.setText(goods.getName());
         viewHolder.price.setText("￥" + goods.getPrice());
-
-        MutableLiveData<byte[]> byteArray = new MutableLiveData<>();
-
-        byteArray.observe(mActivity, bytes -> {
-            assert bytes != null;
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            viewHolder.pic.setImageBitmap(bitmap);
+        viewHolder.itemView.setTag(goods.getId());
+        Glide.with(mActivity)
+                .load("http:" + goods.getPic())
+                .into(viewHolder.pic);
+        viewHolder.itemView.setOnClickListener(v -> {
+            long id = (long) v.getTag();
+            Intent intent = new Intent(mActivity, GoodsDetailActivity.class);
+            intent.putExtra("ID", id);
+            mActivity.startActivity(intent);
         });
-
-        loadPic(byteArray, i);
 
     }
 
@@ -87,27 +76,6 @@ public class GoodsListAdapter extends RecyclerView.Adapter<GoodsListAdapter.View
         return mGoodsList.size();
     }
 
-
-    private void loadPic(MutableLiveData<byte[]> byteArray, int i) {
-        AsyncTask.execute(() -> {
-            try {
-                HttpURLConnection connection = (HttpURLConnection) new URL("http:" + mGoodsList.get(i).getPic()).openConnection();
-                connection.connect();
-
-                InputStream inputStream = connection.getInputStream();
-                byte[] result = new byte[inputStream.available()];
-                int len = inputStream.read(result, 0, result.length);
-                Log.d(TAG, "loadPic: " + (len == result.length));
-
-                byteArray.postValue(result);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        });
-
-    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
