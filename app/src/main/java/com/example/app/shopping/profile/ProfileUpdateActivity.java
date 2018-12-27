@@ -1,4 +1,3 @@
-
 package com.example.app.shopping.profile;
 
 import android.content.Intent;
@@ -15,12 +14,11 @@ import android.widget.Toast;
 import com.example.app.shopping.R;
 import com.example.app.shopping.ShoppingApplication;
 import com.example.app.shopping.entity.User;
-import com.example.app.shopping.entity.User_;
 
 import io.objectbox.Box;
-import io.objectbox.query.Query;
 
-public class RegisterActivity extends AppCompatActivity {
+public class ProfileUpdateActivity extends AppCompatActivity {
+
 
     private EditText username;
     private EditText password;
@@ -33,11 +31,10 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_profile_update);
         initToolbar();
         contentInit();
     }
-
 
     private void initToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -55,7 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
         address = findViewById(R.id.address_field);
     }
 
-    private boolean register() {
+    private boolean update() {
         if (!password.getText().toString().equals(confirmPassword.getText().toString()))
             return false;
 
@@ -68,14 +65,9 @@ public class RegisterActivity extends AppCompatActivity {
         user.setAddress(address.getText().toString());
 
         Box<User> userBox = ShoppingApplication.boxStore.boxFor(User.class);
-        Query query = userBox.query()
-                .equal(User_.username, user.getUsername())
-                .build();
-        if (query.count() != 0)
-            return false;
-
-        ShoppingApplication.currentUserId = userBox.getId(user);
+        user.setId(ShoppingApplication.currentUserId);
         userBox.put(user);
+
         return true;
     }
 
@@ -87,12 +79,12 @@ public class RegisterActivity extends AppCompatActivity {
         MenuItem done = menu.findItem(R.id.done);
 
         done.setOnMenuItemClickListener(item -> {
-                    if (register()) {
-                        Intent intent = new Intent(this, ProfileActivity.class);
+                    if (update()) {
+                        Intent intent = new Intent(this, ProfileDetailActivity.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(this, "注册失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
                     }
 
                     return false;

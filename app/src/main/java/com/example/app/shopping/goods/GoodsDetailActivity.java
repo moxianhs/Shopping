@@ -8,12 +8,16 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.app.shopping.R;
 import com.example.app.shopping.ShoppingApplication;
 import com.example.app.shopping.entity.Goods;
+import com.example.app.shopping.entity.Order;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import io.objectbox.Box;
@@ -73,10 +77,29 @@ public class GoodsDetailActivity extends AppCompatActivity {
             Button buy = findViewById(R.id.buy);
             Button like = findViewById(R.id.like);
             buy.setOnClickListener(v -> {
-                // todo jump to order list
+
+                Box<Order> orderBox = ShoppingApplication.boxStore.boxFor(Order.class);
+                Order order = new Order();
+                order.setGoodsId(id);
+                order.setCount(sum.getValue());
+                order.setUserId(ShoppingApplication.currentUserId);
+                LocalDateTime time = LocalDateTime.now();
+                order.setDate(time.format(DateTimeFormatter.ISO_DATE_TIME));
+                order.setStatus(Order.ORDERED);
+                orderBox.put(order);
+                Toast.makeText(this, "已购买", Toast.LENGTH_SHORT).show();
             });
             like.setOnClickListener(v -> {
-                // todo jump to cart list
+                Box<Order> orderBox = ShoppingApplication.boxStore.boxFor(Order.class);
+                Order order = new Order();
+                order.setGoodsId(id);
+                order.setCount(sum.getValue());
+                order.setUserId(ShoppingApplication.currentUserId);
+                LocalDateTime time = LocalDateTime.now();
+                order.setDate(time.format(DateTimeFormatter.ISO_DATE_TIME));
+                order.setStatus(Order.NOT_ORDERED);
+                orderBox.put(order);
+                Toast.makeText(this, "已加入购物车", Toast.LENGTH_SHORT).show();
             });
         }
     }

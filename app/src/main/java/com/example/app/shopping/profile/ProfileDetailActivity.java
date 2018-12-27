@@ -61,9 +61,9 @@ public class ProfileDetailActivity extends AppCompatActivity {
         MenuItem edit = menu.findItem(R.id.edit);
 
         edit.setOnMenuItemClickListener(item -> {
-            Intent intent = new Intent();
+            Intent intent = new Intent(this, ProfileUpdateActivity.class);
             startActivity(intent);
-
+            finish();
             return false;
         });
 

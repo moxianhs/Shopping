@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.app.shopping.R;
 import com.example.app.shopping.ShoppingApplication;
+import com.example.app.shopping.cart.OrderListActivity;
 import com.example.app.shopping.entity.User;
 
 import io.objectbox.Box;
@@ -53,6 +54,7 @@ public class ProfileActivity extends AppCompatActivity {
         cardViews[0].setOnClickListener(v -> {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+            finish();
         });
 
         cardViews[1].setOnClickListener(v -> {
@@ -61,6 +63,11 @@ public class ProfileActivity extends AppCompatActivity {
 
         cardViews[2].setOnClickListener(v -> {
             Intent intent = new Intent(this, ProfileDetailActivity.class);
+            startActivity(intent);
+        });
+
+        cardViews[3].setOnClickListener(v -> {
+            Intent intent = new Intent(this, OrderListActivity.class);
             startActivity(intent);
         });
 

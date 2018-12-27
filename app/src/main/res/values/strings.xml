@@ -32,4 +32,8 @@
     <string name="hint_age">年龄</string>
     <string name="user_info_title">个人详情</string>
     <string name="edit">修改</string>
+    <string name="update">修改信息</string>
+    <string name="order_list_title">订单列表</string>
+    <string name="delete">删除</string>
+    <string name="cart_title">购物车</string>
 </resources>

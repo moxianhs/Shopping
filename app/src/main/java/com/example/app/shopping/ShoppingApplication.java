@@ -26,7 +26,6 @@ public class ShoppingApplication extends Application {
         super.onCreate();
         application = this;
         boxStore = MyObjectBox.builder().androidContext(this).build();
-
         try {
             goodsInit();
         } catch (IOException e) {
@@ -39,7 +38,6 @@ public class ShoppingApplication extends Application {
         String line = br.readLine();
         Gson gson = new Gson();
         Box<Goods> goodsBox = boxStore.boxFor(Goods.class);
-        goodsBox.removeAll();
         while (line != null && line.length() > 0) {
             Goods goods = gson.fromJson(line, Goods.class);
             Log.e(TAG, "goodsInit: " + goods);
